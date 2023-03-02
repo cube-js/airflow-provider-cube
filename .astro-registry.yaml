@@ -1,0 +1,14 @@
+# Python package name.
+package-name: airflow-provider-cube
+# The name of the provider to be displayed on the Registry.
+display-name: Airflow Cube Provider
+# A description to be displayed on the main Provider page.
+description: A Cube Apache Airflow provider package built by Cube.
+# Documentation URL.
+docs_url: https://github.com/cube-js/airflow-provider-cube/blob/main/README.md
+# Hooks.
+hooks:
+  - module: cube_provider.hooks.cube.CubeHook
+# Operators.
+operators:
+  - module: cube_provider.operators.cube.BuildOperator
