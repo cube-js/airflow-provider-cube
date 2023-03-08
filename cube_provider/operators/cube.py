@@ -1,3 +1,21 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict
 from airflow.models import BaseOperator
@@ -45,7 +63,9 @@ class CubeBaseOperator(BaseOperator):
         self.headers = headers or {}
 
         if kwargs.get("xcom_push") is not None:
-            raise AirflowException("'xcom_push' was deprecated, use 'BaseOperator.do_xcom_push' instead")
+            raise AirflowException(
+                "'xcom_push' was deprecated, use 'BaseOperator.do_xcom_push' instead"
+            )
 
     def execute(self, context: Context) -> Any:
         hook = CubeHook(cube_conn_id=self.cube_conn_id)
@@ -64,7 +84,7 @@ class CubeQueryOperator(CubeBaseOperator):
 
     :param cube_conn_id: connection to run the operator with
     :param headers: the HTTP headers to be added to the request
-    :param query: query object
+    :param query: Cube query object
     :param timeout: timeout in seconds to wait for an API call to respond (default 30 sec)
     :param wait: number of seconds to wait between API calls (default 10 sec)
     """
@@ -128,7 +148,7 @@ class CubeBuildOperator(CubeBaseOperator):
     ) -> None:
         super().__init__(
             cube_conn_id = cube_conn_id,
-            endpoint = "/cubejs-system/v1/pre-aggregations/jobs",
+            endpoint = "/cubejs-api/v1/pre-aggregations/jobs",
             method = "POST",
             data = json.dumps(
                 {
@@ -156,7 +176,7 @@ class CubeBuildOperator(CubeBaseOperator):
 
             self.log.info("Get build status.")
             statuses = hook.run(
-                endpoint = "/cubejs-system/v1/pre-aggregations/jobs",
+                endpoint = "/cubejs-api/v1/pre-aggregations/jobs",
                 method = "POST",
                 data = json.dumps(
                     {
