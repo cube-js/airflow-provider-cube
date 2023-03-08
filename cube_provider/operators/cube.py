@@ -1,4 +1,3 @@
-#
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -77,7 +76,6 @@ class CubeBaseOperator(BaseOperator):
             headers = self.headers,
         )
 
-
 class CubeQueryOperator(CubeBaseOperator):
     """
     Retrieve data from a Cube.
@@ -115,6 +113,7 @@ class CubeQueryOperator(CubeBaseOperator):
         while not self.timeout or elapsed_time <= self.timeout:
             data = super().execute(context)
             if "error" in data.keys() and "Continue wait" in data["error"]:
+                self.log.info(f"Continue wait error. Sleeping {self.wait} sec.")
                 time.sleep(self.wait)
                 elapsed_time += self.wait
                 continue

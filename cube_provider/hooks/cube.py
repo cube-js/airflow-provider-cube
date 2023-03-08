@@ -1,4 +1,3 @@
-#
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -18,6 +17,7 @@
 
 from __future__ import annotations
 from typing import Any
+import json
 import jwt
 import requests
 from airflow.hooks.base import BaseHook
@@ -57,9 +57,7 @@ class CubeHook(BaseHook):
 
         if self.cube_conn_id:
             conn = self.get_connection(self.cube_conn_id)
-            extra = {}
             key = "DEFAULT_SECRET"
-            payload = {}
 
             # host
             if conn.host and "://" in conn.host:
@@ -75,10 +73,14 @@ class CubeHook(BaseHook):
             
             # extra
             if conn.extra:
-                extra = conn.extra_dejson
-                if hasattr(extra, 'security_context'):
-                    payload = extra.security_context
-            extra.pop('security_context', None)
+                extra = json.loads(conn.extra)
+                if 'security_context' in extra:
+                    payload = extra["security_context"]
+                else:
+                    raise TypeError("Cube's securityContext is missed or invalid.")
+            else:
+                raise TypeError("Cube's securityContext is missed or invalid.")
+            extra.pop("security_context", None)
 
             # payload
             if ("exp" not in payload and "expiresIn" not in payload):
@@ -127,7 +129,7 @@ class CubeHook(BaseHook):
 
         # api call
         try:
-            self.log.info("Sending %r to the url %s", method, url)
+            self.log.info(f"Sending {method} to the url {url}")
             if method.upper() == "GET":
                 response = session.get(url=url, params=data)
             if method.upper() == "POST":
