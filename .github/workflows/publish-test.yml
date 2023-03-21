@@ -1,9 +1,9 @@
-name: Publish new release
+name: Publish new test release
 
 on:
   push:
     tags:
-      - '*.*.*'
+      - '*.*.*-test'
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
       - name: Build package
         run: python3 -m build
       - name: Publish package
-        run: python3 -m twine upload --repository pypi -u $USER -p $PASS dist/*
+        run: python3 -m twine upload --repository testpypi -u $USER -p $PASS dist/*
         env:
-          USER: ${{ secrets.PYPI_USER }}
-          PASS: ${{ secrets.PYPI_PASS }}
+          USER: ${{ secrets.TESTPYPI_USER }}
+          PASS: ${{ secrets.TESTPYPI_PASS }}
