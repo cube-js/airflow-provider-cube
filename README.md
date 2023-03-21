@@ -1,4 +1,4 @@
-<h1 align="center">Airflow Cube Provider</h1>
+# Airflow Cube Provider
 
 Cube is the semantic layer for building data applications. It helps 
 data engineers and application developers access data from modern data
