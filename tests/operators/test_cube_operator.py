@@ -27,20 +27,23 @@ import pytest
 import logging
 import requests_mock
 from unittest import mock
-from cube_provider.operators.cube import CubeBaseOperator, CubeQueryOperator, CubeBuildOperator
+from cube_provider.operators.cube import (
+    CubeBaseOperator,
+    CubeQueryOperator,
+    CubeBuildOperator,
+)
 
 log = logging.getLogger(__name__)
 
-AIRFLOW_CONN_CUBE_TEST=json.dumps({
-    "conn_type": "generic",
-    "host": "https://example.cube.dev",
-    "password": "23dff8b29cf20df38a4c78dfaf689fa55916add4d27ee3dd9ba75d14732aafa3",
-    "extra": {
-        "security_context": {
-            "expiresIn": "7d"
-        }
+AIRFLOW_CONN_CUBE_TEST = json.dumps(
+    {
+        "conn_type": "generic",
+        "host": "https://example.cube.dev",
+        "password": "23dff8b29cf20df38a4c78dfaf689fa55916add4d27ee3dd9ba75d14732aafa3",
+        "extra": {"security_context": {"expiresIn": "7d"}},
     }
-})
+)
+
 
 @mock.patch.dict("os.environ", AIRFLOW_CONN_CUBE_TEST=AIRFLOW_CONN_CUBE_TEST)
 class TestCubeBaseOperator:
@@ -52,10 +55,10 @@ class TestCubeBaseOperator:
         with requests_mock.Mocker() as m:
             m.get("https://example.cube.dev/api", json={"data": "mocked response"})
             op = CubeBaseOperator(
-                task_id = "base_op",
+                task_id="base_op",
                 cube_conn_id="cube_test",
-                endpoint = "/api",
-                method = "GET",
+                endpoint="/api",
+                method="GET",
             )
             payload = op.execute(context={})
             assert payload["data"] == "mocked response"
@@ -64,14 +67,14 @@ class TestCubeBaseOperator:
         with requests_mock.Mocker() as m:
             m.get("https://example.cube.dev/api", status_code=400)
             op = CubeBaseOperator(
-                task_id = "base_op",
+                task_id="base_op",
                 cube_conn_id="cube_test",
-                endpoint = "/api",
-                method = "GET",
+                endpoint="/api",
+                method="GET",
             )
             with pytest.raises(
                 Exception,
-                match="GET request to the https://example.cube.dev/api failed with the reason: None"
+                match="GET request to the https://example.cube.dev/api failed with the reason: None",
             ):
                 op.execute(context={})
 
@@ -79,10 +82,10 @@ class TestCubeBaseOperator:
         with requests_mock.Mocker() as m:
             m.post("https://example.cube.dev/api", json={"data": "mocked response"})
             op = CubeBaseOperator(
-                task_id = "base_op",
+                task_id="base_op",
                 cube_conn_id="cube_test",
-                endpoint = "/api",
-                method = "POST",
+                endpoint="/api",
+                method="POST",
             )
             payload = op.execute(context={})
             assert payload["data"] == "mocked response"
@@ -91,16 +94,17 @@ class TestCubeBaseOperator:
         with requests_mock.Mocker() as m:
             m.post("https://example.cube.dev/api", status_code=400)
             op = CubeBaseOperator(
-                task_id = "base_op",
+                task_id="base_op",
                 cube_conn_id="cube_test",
-                endpoint = "/api",
-                method = "POST",
+                endpoint="/api",
+                method="POST",
             )
             with pytest.raises(
                 Exception,
-                match="POST request to the https://example.cube.dev/api failed with the reason: None"
+                match="POST request to the https://example.cube.dev/api failed with the reason: None",
             ):
                 op.execute(context={})
+
 
 @mock.patch.dict("os.environ", AIRFLOW_CONN_CUBE_TEST=AIRFLOW_CONN_CUBE_TEST)
 class TestCubeQueryOperator:
@@ -112,20 +116,17 @@ class TestCubeQueryOperator:
         with requests_mock.Mocker() as m:
             m.get(
                 "https://example.cube.dev/cubejs-api/v1/load?query=%7B%7D",
-                json = {
-                    "data": "mocked response"
-                },
-                status_code = 200,
+                json={"data": "mocked response"},
+                status_code=200,
             )
             op = CubeQueryOperator(
-                task_id = "query_op",
+                task_id="query_op",
                 cube_conn_id="cube_test",
-                query = {},
-                timeout = -1,
+                query={},
+                timeout=-1,
             )
             with pytest.raises(
-                Exception,
-                match="Cube API took longer than -1 seconds."
+                Exception, match="Cube API took longer than -1 seconds."
             ):
                 op.execute(context={})
 
@@ -134,26 +135,19 @@ class TestCubeQueryOperator:
             m.get(
                 "https://example.cube.dev/cubejs-api/v1/load?query=%7B%7D",
                 [
-                    {
-                        "json": {
-                            "error": "Continue wait"
-                        },
-                        "status_code": 200
-                    },
-                    {
-                        "json": { "data": "mocked response" },
-                        "status_code": 200
-                    }
-                ]
+                    {"json": {"error": "Continue wait"}, "status_code": 200},
+                    {"json": {"data": "mocked response"}, "status_code": 200},
+                ],
             )
             op = CubeQueryOperator(
-                task_id = "query_op",
-                cube_conn_id = "cube_test",
-                query = {},
-                wait = 0,
+                task_id="query_op",
+                cube_conn_id="cube_test",
+                query={},
+                wait=0,
             )
             payload = op.execute(context={})
             assert payload["data"] == "mocked response"
+
 
 response_tokens = [
     "be598e318484848cbb06291baa59ca3a",
@@ -300,6 +294,8 @@ response_status_done = {
         },
     },
 }
+
+
 @mock.patch.dict("os.environ", AIRFLOW_CONN_CUBE_TEST=AIRFLOW_CONN_CUBE_TEST)
 class TestCubeBuildOperator:
     """
@@ -310,18 +306,16 @@ class TestCubeBuildOperator:
         with requests_mock.Mocker() as m:
             m.post(
                 "https://example.cube.dev/cubejs-api/v1/pre-aggregations/jobs",
-                json = {
-                    "data": "mocked response"
-                },
-                status_code = 200,
+                json={"data": "mocked response"},
+                status_code=200,
             )
             op = CubeBuildOperator(
-                task_id = "build_op",
+                task_id="build_op",
                 cube_conn_id="cube_test",
-                headers = {},
-                selector = {},
-                complete = False,
-                wait = 0,
+                headers={},
+                selector={},
+                complete=False,
+                wait=0,
             )
             payload = op.execute(context={})
             assert payload["data"] == "mocked response"
@@ -331,27 +325,21 @@ class TestCubeBuildOperator:
             m.post(
                 "https://example.cube.dev/cubejs-api/v1/pre-aggregations/jobs",
                 [
-                    {
-                        "json": response_tokens,
-                        "status_code": 200
-                    },
-                    {
-                        "json": response_status_missing_partition,
-                        "status_code": 200
-                    }
-                ]
+                    {"json": response_tokens, "status_code": 200},
+                    {"json": response_status_missing_partition, "status_code": 200},
+                ],
             )
             op = CubeBuildOperator(
-                task_id = "build_op",
+                task_id="build_op",
                 cube_conn_id="cube_test",
-                headers = {},
-                selector = {},
-                complete = True,
-                wait = 0,
+                headers={},
+                selector={},
+                complete=True,
+                wait=0,
             )
             with pytest.raises(
                 Exception,
-                match="Cube pre-aggregations build failed: missing partitions."
+                match="Cube pre-aggregations build failed: missing partitions.",
             ):
                 op.execute(context={})
 
@@ -360,56 +348,41 @@ class TestCubeBuildOperator:
             m.post(
                 "https://example.cube.dev/cubejs-api/v1/pre-aggregations/jobs",
                 [
-                    {
-                        "json": response_tokens,
-                        "status_code": 200
-                    },
-                    {
-                        "json": response_status_failure,
-                        "status_code": 200
-                    }
-                ]
+                    {"json": response_tokens, "status_code": 200},
+                    {"json": response_status_failure, "status_code": 200},
+                ],
             )
             op = CubeBuildOperator(
-                task_id = "build_op",
+                task_id="build_op",
                 cube_conn_id="cube_test",
-                headers = {},
-                selector = {},
-                complete = True,
-                wait = 0,
+                headers={},
+                selector={},
+                complete=True,
+                wait=0,
             )
             with pytest.raises(
                 Exception,
-                match="Cube pre-aggregations build failed: failure: returned error"
+                match="Cube pre-aggregations build failed: failure: returned error",
             ):
                 op.execute(context={})
-    
+
     def test_completed(self):
         with requests_mock.Mocker() as m:
             m.post(
                 "https://example.cube.dev/cubejs-api/v1/pre-aggregations/jobs",
                 [
-                    {
-                        "json": response_tokens,
-                        "status_code": 200
-                    },
-                    {
-                        "json": response_status_processing,
-                        "status_code": 200
-                    },
-                    {
-                        "json": response_status_done,
-                        "status_code": 200
-                    }
-                ]
+                    {"json": response_tokens, "status_code": 200},
+                    {"json": response_status_processing, "status_code": 200},
+                    {"json": response_status_done, "status_code": 200},
+                ],
             )
             op = CubeBuildOperator(
-                task_id = "build_op",
+                task_id="build_op",
                 cube_conn_id="cube_test",
-                headers = {},
-                selector = {},
-                complete = True,
-                wait = 0,
+                headers={},
+                selector={},
+                complete=True,
+                wait=0,
             )
             payload = op.execute(context={})
             assert payload == True

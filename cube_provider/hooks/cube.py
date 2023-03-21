@@ -22,6 +22,7 @@ import jwt
 import requests
 from airflow.hooks.base import BaseHook
 
+
 class CubeHook(BaseHook):
     """
     Cube Hook that interacts with the Cube Server via HTTP.
@@ -46,7 +47,7 @@ class CubeHook(BaseHook):
         """
         Returns http session to use with requests. Uses generic connection. Connection
         `host` field is required and must contain schema, address and port. Cube's secret must
-        be specified in the connection `password` field. To specify Cube security context 
+        be specified in the connection `password` field. To specify Cube security context
         `extra.security_context` field must be used. Rest of the connection fields will be
         ignored.
 
@@ -64,17 +65,17 @@ class CubeHook(BaseHook):
                 self.base_url = conn.host
             else:
                 raise TypeError("Cube's connection host is missed or invalid.")
-            
+
             # password
             if conn.password:
                 key = conn.password
             else:
                 raise TypeError("Cube's connection secret is missed.")
-            
+
             # extra
             if conn.extra:
                 extra = json.loads(conn.extra)
-                if 'security_context' in extra:
+                if "security_context" in extra:
                     payload = extra["security_context"]
                 else:
                     raise TypeError("Cube's securityContext is missed or invalid.")
@@ -83,19 +84,21 @@ class CubeHook(BaseHook):
             extra.pop("security_context", None)
 
             # payload
-            if ("exp" not in payload and "expiresIn" not in payload):
+            if "exp" not in payload and "expiresIn" not in payload:
                 payload["expiresIn"] = "7d"
 
             # auth token
-            extra["Authorization"] = jwt.encode(payload=payload, key=key, algorithm="HS256")
-            
+            extra["Authorization"] = jwt.encode(
+                payload=payload, key=key, algorithm="HS256"
+            )
+
             # extra headers
             try:
                 extra["Content-type"] = "application/json"
                 session.headers.update(extra)
             except TypeError:
                 self.log.warning("Connection to %s has invalid extra field.", conn.host)
-        
+
         # specified headers
         if headers:
             session.headers.update(headers)
@@ -122,7 +125,12 @@ class CubeHook(BaseHook):
         session: requests.Session = self.get_conn(headers)
 
         # api url
-        if self.base_url and not self.base_url.endswith("/") and endpoint and not endpoint.startswith("/"):
+        if (
+            self.base_url
+            and not self.base_url.endswith("/")
+            and endpoint
+            and not endpoint.startswith("/")
+        ):
             url = self.base_url + "/" + endpoint
         else:
             url = (self.base_url or "") + (endpoint or "")

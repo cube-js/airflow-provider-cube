@@ -20,6 +20,7 @@ from pendulum import datetime
 from airflow.decorators import dag, task
 from cube_provider.operators.cube import CubeQueryOperator
 
+
 @dag(
     start_date=datetime(2023, 1, 1),
     schedule=None,
@@ -41,26 +42,18 @@ def cube_query_workflow():
     """
 
     query_op = CubeQueryOperator(
-        task_id = "query_op",
-        query = {
-            "measures": [
-                "ECommerce.totalQuantity",
-                "ECommerce.totalProfit"
-            ],
-            "dimensions": [
-                "ECommerce.productName"
-            ],
+        task_id="query_op",
+        query={
+            "measures": ["ECommerce.totalQuantity", "ECommerce.totalProfit"],
+            "dimensions": ["ECommerce.productName"],
             "timeDimensions": [
-            {
-                "dimension": "ECommerce.orderDate",
-                "dateRange": [
-                    "2020-01-01 00:00:00.000",
-                    "2020-03-30 22:50:50.999"
-                ],
-                "granularity": "quarter"
-            }
-            ]
-        }
+                {
+                    "dimension": "ECommerce.orderDate",
+                    "dateRange": ["2020-01-01 00:00:00.000", "2020-03-30 22:50:50.999"],
+                    "granularity": "quarter",
+                }
+            ],
+        },
     )
 
     @task()
@@ -73,5 +66,6 @@ def cube_query_workflow():
         print(f"Fetched data: {data}")
 
     print_op(query_op.output)
+
 
 cube_query_workflow()

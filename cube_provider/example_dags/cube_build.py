@@ -20,6 +20,7 @@ from pendulum import datetime
 from airflow.decorators import dag, task
 from cube_provider.operators.cube import CubeBuildOperator
 
+
 @dag(
     start_date=datetime(2023, 1, 1),
     schedule=None,
@@ -41,22 +42,22 @@ def cube_build_workflow():
     """
 
     build_op = CubeBuildOperator(
-        task_id = "build_op",
-        headers = {},
-        selector = {
+        task_id="build_op",
+        headers={},
+        selector={
             "contexts": [
-                { "securityContext": { "tenant": "t1" } },
-                { "securityContext": { "tenant": "t2" } },
-                { "securityContext": { "tenant": "t3" } },
-                { "securityContext": { "tenant": "t4" } },
+                {"securityContext": {"tenant": "t1"}},
+                {"securityContext": {"tenant": "t2"}},
+                {"securityContext": {"tenant": "t3"}},
+                {"securityContext": {"tenant": "t4"}},
             ],
             "timezones": ["UTC"],
             "datasources": ["default"],
             "cubes": ["ECommerce"],
             "preAggregations": ["ECommerce.ManualUpdates"],
         },
-        complete = True,
-        wait = 10,
+        complete=True,
+        wait=10,
     )
 
     @task()
@@ -69,5 +70,6 @@ def cube_build_workflow():
         print(f"Data is: {data}")
 
     print_op(build_op.output)
+
 
 cube_build_workflow()

@@ -32,7 +32,11 @@ setup(
     description="A Cube Apache Airflow provider package built by Cube.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    entry_points={"apache_airflow_provider": ["provider_info=cube_provider.__init__:get_provider_info"]},
+    entry_points={
+        "apache_airflow_provider": [
+            "provider_info=cube_provider.__init__:get_provider_info"
+        ]
+    },
     license="Apache License 2.0",
     packages=find_packages(exclude=["*tests.*", "*tests"]),
     install_requires=["apache-airflow>=2.3"],

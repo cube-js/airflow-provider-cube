@@ -26,6 +26,7 @@ import json
 if TYPE_CHECKING:
     from airflow.utils.context import Context
 
+
 class CubeBaseOperator(BaseOperator):
     """
     Calls Cube's REST API endpoint to execute an action.
@@ -70,11 +71,12 @@ class CubeBaseOperator(BaseOperator):
         hook = CubeHook(cube_conn_id=self.cube_conn_id)
         self.log.info("Cube API method call")
         return hook.run(
-            endpoint = self.endpoint,
-            method = self.method,
-            data = self.data,
-            headers = self.headers,
+            endpoint=self.endpoint,
+            method=self.method,
+            data=self.data,
+            headers=self.headers,
         )
+
 
 class CubeQueryOperator(CubeBaseOperator):
     """
@@ -98,16 +100,16 @@ class CubeQueryOperator(CubeBaseOperator):
         **kwargs,
     ) -> None:
         super().__init__(
-            cube_conn_id = cube_conn_id,
-            endpoint = "/cubejs-api/v1/load",
-            method = "GET",
-            data = {"query": json.dumps(query)},
-            headers = headers,
+            cube_conn_id=cube_conn_id,
+            endpoint="/cubejs-api/v1/load",
+            method="GET",
+            data={"query": json.dumps(query)},
+            headers=headers,
             **kwargs,
         )
         self.timeout = timeout
         self.wait = wait
-    
+
     def execute(self, context: Context) -> Any:
         elapsed_time = 0
         while not self.timeout or elapsed_time <= self.timeout:
@@ -119,10 +121,11 @@ class CubeQueryOperator(CubeBaseOperator):
                 continue
             else:
                 return data
-            
+
         msg = f"Cube API took longer than {self.timeout} seconds."
         self.log.warning(msg)
         raise Exception(msg)
+
 
 class CubeBuildOperator(CubeBaseOperator):
     """
@@ -146,23 +149,23 @@ class CubeBuildOperator(CubeBaseOperator):
         **kwargs,
     ) -> None:
         super().__init__(
-            cube_conn_id = cube_conn_id,
-            endpoint = "/cubejs-api/v1/pre-aggregations/jobs",
-            method = "POST",
-            data = json.dumps(
+            cube_conn_id=cube_conn_id,
+            endpoint="/cubejs-api/v1/pre-aggregations/jobs",
+            method="POST",
+            data=json.dumps(
                 {
                     "action": "post",
                     "selector": selector,
                 },
             ),
-            headers = headers,
+            headers=headers,
             **kwargs,
         )
 
         self.selector = selector
         self.complete = complete
         self.wait = wait
-    
+
     def execute(self, context: Context) -> Any:
         tokens = super().execute(context)
         if not self.complete:
@@ -175,16 +178,16 @@ class CubeBuildOperator(CubeBaseOperator):
 
             self.log.info("Get build status.")
             statuses = hook.run(
-                endpoint = "/cubejs-api/v1/pre-aggregations/jobs",
-                method = "POST",
-                data = json.dumps(
+                endpoint="/cubejs-api/v1/pre-aggregations/jobs",
+                method="POST",
+                data=json.dumps(
                     {
                         "action": "get",
                         "resType": "object",
                         "tokens": tokens,
                     }
                 ),
-                headers = self.headers,
+                headers=self.headers,
             )
 
             self.log.info("Check build status.")
@@ -201,7 +204,9 @@ class CubeBuildOperator(CubeBaseOperator):
                     in_process.append(token)
 
             if missing_only:
-                raise Exception("Cube pre-aggregations build failed: missing partitions.")
+                raise Exception(
+                    "Cube pre-aggregations build failed: missing partitions."
+                )
 
             iterate = len(in_process) > 0
 
