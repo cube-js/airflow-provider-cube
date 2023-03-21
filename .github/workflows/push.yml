@@ -1,0 +1,51 @@
+name: Push and PR to master
+
+on:
+  push:
+    paths:
+      - '.github/workflows/push.yml'
+      - 'cube_provider/**'
+      - 'tests/**'
+      - 'setup.py'
+      - 'LICENSE'
+      - 'README.md'
+    branches:
+      - 'master'
+  pull_request:
+    paths:
+      - '.github/workflows/push.yml'
+      - 'cube_provider/**'
+      - 'tests/**'
+      - 'setup.py'
+      - 'LICENSE'
+      - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          node-version: '3.10'
+      - name: Upgrade "pip"
+        run: python3 -m pip install --upgrade pip
+      - name: Upgrade "black"
+        run: python3 -m pip install --upgrade black
+      - name: Upgrade "build"
+        run: python3 -m pip install --upgrade build
+      - name: Upgrade "twine"
+        run: python3 -m pip install --upgrade twine
+      - name: Upgrade "pytest"
+        run: python3 -m pip install --upgrade pytest
+      - name: Run black
+        run: black .
+      - name: Run CubeHook unit tests
+        run: pytest -s tests/hooks/test_cube_hook.py
+      - name: Run CubeOperators unit tests
+        run: pytest -s tests/operators/test_cube_operator.py
+      - name: Build package
+        run: python3 -m build

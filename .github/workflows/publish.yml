@@ -1,0 +1,31 @@
+name: Publish new release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          node-version: '3.10'
+      - name: Upgrade "pip"
+        run: python3 -m pip install --upgrade pip
+      - name: Upgrade "build"
+        run: python3 -m pip install --upgrade build
+      - name: Upgrade "twine"
+        run: python3 -m pip install --upgrade twine
+      - name: Build package
+        run: python3 -m build
+      - name: Publish package
+        run: python3 -m twine upload --repository testpypi -u $USER -p $PASS dist/*
+        env:
+          USER: ${{ secrets.TESTPYPI_USER }}
+          PASS: ${{ secrets.TESTPYPI_PASS }}
