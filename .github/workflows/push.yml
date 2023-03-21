@@ -1,4 +1,4 @@
-name: Push and PR to master
+name: Push and PR to main
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - 'LICENSE'
       - 'README.md'
     branches:
-      - 'master'
+      - 'main'
   pull_request:
     paths:
       - '.github/workflows/push.yml'
