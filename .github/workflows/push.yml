@@ -41,6 +41,8 @@ jobs:
         run: python3 -m pip install --upgrade twine
       - name: Upgrade "pytest"
         run: python3 -m pip install --upgrade pytest
+      - name: Upgrade "requests-mock"
+        run: python3 -m pip install --upgrade requests-mock
       - name: Run black
         run: black .
       - name: Run CubeHook unit tests
