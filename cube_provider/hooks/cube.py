@@ -20,7 +20,7 @@ from typing import Any
 import json
 import jwt
 import requests
-from airflow.hooks.base import BaseHook
+from airflow.providers.common.compat.sdk import BaseHook
 
 
 class CubeHook(BaseHook):

@@ -32,12 +32,11 @@ process.
 
 ## Dependencies
 
-Python 3.10
+Python >= 3.10
 
-| Package            | Version |
-|--------------------|---------|
-| typing             | 2.6.0   |
-| jwt                | 2.6.0   |
-| json               | 2.0.9   |
-| requests           | 2.28.2  |
-| airflow            | 2.5.1   |
+| Package                                    | Version  |
+|--------------------------------------------|----------|
+| apache-airflow                             | >= 2.11.0 |
+| apache-airflow-providers-common-compat     | >= 1.7.4  |
+| PyJWT                                      | >= 2.6.0  |
+| requests                                   | >= 2.28.2 |

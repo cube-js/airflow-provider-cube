@@ -21,35 +21,57 @@ on:
       - 'README.md'
 
 jobs:
-  build:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 10
+  lint:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          node-version: '3.10'
-      - name: Upgrade "pip"
-        run: python3 -m pip install --upgrade pip
-      - name: Upgrade "black"
+          python-version: '3.10'
+      - name: Install black
         run: python3 -m pip install --upgrade black
-      - name: Upgrade "build"
-        run: python3 -m pip install --upgrade build
-      - name: Upgrade "twine"
-        run: python3 -m pip install --upgrade twine
-      - name: Upgrade "pytest"
-        run: python3 -m pip install --upgrade pytest
-      - name: Upgrade "requests-mock"
-        run: python3 -m pip install --upgrade requests-mock
-      - name: Instal package locally
-        run: pip install -e .
       - name: Run black
-        run: black .
-      - name: Run CubeHook unit tests
-        run: pytest -s tests/hooks/test_cube_hook.py
-      - name: Run CubeOperators unit tests
-        run: pytest -s tests/operators/test_cube_operator.py
+        run: black --check .
+
+  test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        airflow-version: ['2.11.0', '3.1.6']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+      - name: Install Airflow ${{ matrix.airflow-version }}
+        run: pip install "apache-airflow==${{ matrix.airflow-version }}"
+      - name: Install test dependencies
+        run: pip install pytest requests-mock
+      - name: Install package locally
+        run: pip install -e .
+      - name: Run tests
+        run: pytest -s tests/
+
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    needs: [lint, test]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install build tools
+        run: python3 -m pip install --upgrade build twine
       - name: Build package
         run: python3 -m build
