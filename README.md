@@ -1,5 +1,7 @@
 # Airflow Cube Provider
 
+[![PyPI version](https://badge.fury.io/py/apache-airflow-providers-cube.svg)](https://pypi.org/project/apache-airflow-providers-cube/)
+
 Cube is the semantic layer for building data applications. It helps 
 data engineers and application developers access data from modern data
 stores, organize it into consistent definitions, and deliver it to
