@@ -47,9 +47,7 @@ jobs:
         run: pip install -e .
       - name: Run black
         run: black .
-      - name: Run CubeHook unit tests
-        run: pytest -s tests/hooks/test_cube_hook.py
-      - name: Run CubeOperators unit tests
-        run: pytest -s tests/operators/test_cube_operator.py
+      - name: Run tests
+        run: pytest -s tests/
       - name: Build package
         run: python3 -m build
