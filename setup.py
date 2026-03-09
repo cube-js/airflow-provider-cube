@@ -23,11 +23,11 @@ from setuptools import find_packages, setup
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-__version__ = "3.0.0"
+__version__ = "1.0.0"
 
 """Perform the package airflow-provider-cube setup."""
 setup(
-    name="airflow-provider-cube",
+    name="apache-airflow-providers-cube",
     version=__version__,
     description="A Cube Apache Airflow provider package built by Cube.",
     long_description=long_description,

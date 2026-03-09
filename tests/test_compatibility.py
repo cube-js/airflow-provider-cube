@@ -183,7 +183,7 @@ class TestProviderRegistration:
         from cube_provider import get_provider_info
 
         info = get_provider_info()
-        assert info["package-name"] == "airflow-provider-cube"
+        assert info["package-name"] == "apache-airflow-providers-cube"
 
     def test_provider_info_connection_types(self):
         from cube_provider import get_provider_info

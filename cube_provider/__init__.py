@@ -17,7 +17,7 @@
 
 from importlib.metadata import version
 
-__name__ = "airflow-provider-cube"
+__name__ = "apache-airflow-providers-cube"
 __version__ = version(__name__)
 
 
