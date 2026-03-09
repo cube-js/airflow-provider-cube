@@ -17,7 +17,10 @@
 
 from typing import Any
 from pendulum import datetime
-from airflow.decorators import dag, task
+try:
+    from airflow.sdk import dag, task
+except ImportError:
+    from airflow.decorators import dag, task
 from cube_provider.operators.cube import CubeQueryOperator
 
 

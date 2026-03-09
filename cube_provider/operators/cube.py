@@ -16,15 +16,14 @@
 # under the License.
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Dict
-from airflow.models import BaseOperator
-from airflow.exceptions import AirflowException
+from typing import TYPE_CHECKING, Any
+from airflow.providers.common.compat.sdk import BaseOperator, AirflowException
 from cube_provider.hooks.cube import CubeHook
 import time
 import json
 
 if TYPE_CHECKING:
-    from airflow.utils.context import Context
+    from airflow.providers.common.compat.sdk import Context
 
 
 class CubeBaseOperator(BaseOperator):
@@ -143,7 +142,7 @@ class CubeBuildOperator(CubeBaseOperator):
         *,
         cube_conn_id: str = CubeHook.default_conn_name,
         headers: dict[str, str] | None = None,
-        selector: Dict = {},
+        selector: dict = {},
         complete: bool = False,
         wait: int = 10,
         **kwargs,

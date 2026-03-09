@@ -23,7 +23,7 @@ from setuptools import find_packages, setup
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 
 """Perform the package airflow-provider-cube setup."""
 setup(
@@ -39,7 +39,7 @@ setup(
     },
     license="Apache License 2.0",
     packages=find_packages(exclude=["*tests.*", "*tests"]),
-    install_requires=["apache-airflow>=2.3"],
+    install_requires=["apache-airflow>=2.11.0", "apache-airflow-providers-common-compat>=1.7.4"],
     setup_requires=["setuptools", "wheel"],
     author="Artem Lytvynov",
     author_email="artem.lytvynov@cube.dev",
@@ -48,5 +48,5 @@ setup(
         "Framework :: Apache Airflow",
         "Framework :: Apache Airflow :: Provider",
     ],
-    python_requires="~=3.8",
+    python_requires=">=3.10",
 )
