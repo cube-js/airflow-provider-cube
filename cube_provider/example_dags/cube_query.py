@@ -17,6 +17,7 @@
 
 from typing import Any
 from pendulum import datetime
+
 try:
     from airflow.sdk import dag, task
 except ImportError:
