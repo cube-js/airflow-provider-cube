@@ -57,25 +57,25 @@ class TestInheritance:
 
     def test_cube_hook_is_base_hook(self):
         from cube_provider.hooks.cube import CubeHook
-        from airflow.hooks.base import BaseHook
+        from airflow.providers.common.compat.sdk import BaseHook
 
         assert issubclass(CubeHook, BaseHook)
 
     def test_cube_base_operator_is_base_operator(self):
         from cube_provider.operators.cube import CubeBaseOperator
-        from airflow.models import BaseOperator
+        from airflow.providers.common.compat.sdk import BaseOperator
 
         assert issubclass(CubeBaseOperator, BaseOperator)
 
     def test_cube_query_operator_is_base_operator(self):
         from cube_provider.operators.cube import CubeQueryOperator
-        from airflow.models import BaseOperator
+        from airflow.providers.common.compat.sdk import BaseOperator
 
         assert issubclass(CubeQueryOperator, BaseOperator)
 
     def test_cube_build_operator_is_base_operator(self):
         from cube_provider.operators.cube import CubeBuildOperator
-        from airflow.models import BaseOperator
+        from airflow.providers.common.compat.sdk import BaseOperator
 
         assert issubclass(CubeBuildOperator, BaseOperator)
 
@@ -153,9 +153,10 @@ class TestOperatorPublicAPI:
 
     def test_xcom_push_rejected(self):
         """xcom_push kwarg must raise an error (AirflowException on Airflow 2, TypeError on Airflow 3)."""
+        from airflow.providers.common.compat.sdk import AirflowException
         from cube_provider.operators.cube import CubeBaseOperator
 
-        with pytest.raises((TypeError, Exception), match="xcom_push"):
+        with pytest.raises((TypeError, AirflowException), match="xcom_push"):
             CubeBaseOperator(task_id="test", xcom_push=True)
 
 
@@ -190,8 +191,11 @@ class TestProviderRegistration:
         info = get_provider_info()
         conn_types = info["connection-types"]
         assert len(conn_types) >= 1
-        assert conn_types[0]["connection-type"] == "generic"
-        assert conn_types[0]["hook-class-name"] == "cube_provider.hooks.cube.CubeHook"
+        assert any(
+            ct["connection-type"] == "generic"
+            and ct["hook-class-name"] == "cube_provider.hooks.cube.CubeHook"
+            for ct in conn_types
+        )
 
     def test_provider_info_versions_is_list(self):
         from cube_provider import get_provider_info

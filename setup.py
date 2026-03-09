@@ -39,7 +39,12 @@ setup(
     },
     license="Apache License 2.0",
     packages=find_packages(exclude=["*tests.*", "*tests"]),
-    install_requires=["apache-airflow>=2.11.0", "apache-airflow-providers-common-compat>=1.7.4"],
+    install_requires=[
+        "apache-airflow>=2.11.0",
+        "apache-airflow-providers-common-compat>=1.7.4",
+        "requests>=2.28.0",
+        "PyJWT>=2.6.0",
+    ],
     setup_requires=["setuptools", "wheel"],
     author="Artem Lytvynov",
     author_email="artem.lytvynov@cube.dev",

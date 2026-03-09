@@ -38,5 +38,5 @@ Python >= 3.10
 |--------------------------------------------|----------|
 | apache-airflow                             | >= 2.11.0 |
 | apache-airflow-providers-common-compat     | >= 1.7.4  |
-| jwt                                        | >= 2.6.0  |
+| PyJWT                                      | >= 2.6.0  |
 | requests                                   | >= 2.28.2 |

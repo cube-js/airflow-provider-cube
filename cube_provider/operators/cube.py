@@ -142,11 +142,13 @@ class CubeBuildOperator(CubeBaseOperator):
         *,
         cube_conn_id: str = CubeHook.default_conn_name,
         headers: dict[str, str] | None = None,
-        selector: dict = {},
+        selector: dict | None = None,
         complete: bool = False,
         wait: int = 10,
         **kwargs,
     ) -> None:
+        if selector is None:
+            selector = {}
         super().__init__(
             cube_conn_id=cube_conn_id,
             endpoint="/cubejs-api/v1/pre-aggregations/jobs",
