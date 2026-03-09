@@ -43,7 +43,7 @@ jobs:
         run: python3 -m pip install --upgrade pytest
       - name: Upgrade "requests-mock"
         run: python3 -m pip install --upgrade requests-mock
-      - name: Instal package locally
+      - name: Install package locally
         run: pip install -e .
       - name: Run black
         run: black .
